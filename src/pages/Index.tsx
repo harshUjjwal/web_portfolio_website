@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { HEADER_HEIGHT } from "@/lib/constants";
 import Header from "@/components/portfolio/Header";
 import Hero from "@/components/portfolio/Hero";
 import About from "@/components/portfolio/About";
@@ -16,7 +15,8 @@ const Index = () => {
   const handleNavigate = (section: string) => {
     const element = document.getElementById(section);
     if (element) {
-      const elementPosition = element.offsetTop - HEADER_HEIGHT;
+      const headerHeight = 64; // Height of fixed header
+      const elementPosition = element.offsetTop - headerHeight;
 
       window.scrollTo({
         top: elementPosition,
@@ -37,14 +37,15 @@ const Index = () => {
         "certifications",
         "contact",
       ];
+      const headerHeight = 64;
 
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
           if (
-            rect.top <= HEADER_HEIGHT + 50 &&
-            rect.bottom > HEADER_HEIGHT + 50
+            rect.top <= headerHeight + 50 &&
+            rect.bottom > headerHeight + 50
           ) {
             setActiveSection(section);
             break;

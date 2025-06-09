@@ -121,7 +121,7 @@ const Hero = ({ onNavigate }: HeroProps) => {
             <div className="relative">
               <div className="w-80 h-80 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-gradient-to-br from-blue-50 to-indigo-100">
                 <img
-                  src="./photo/myphoto.jpg"
+                  src="/my_portfolio_website/profile.jpg"
                   alt="Harsh Ujjwal - Computer Science Engineer"
                   className="w-full h-full object-cover"
                   onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -141,7 +141,7 @@ const Hero = ({ onNavigate }: HeroProps) => {
                   <div className="text-center text-gray-600">
                     <div className="text-4xl mb-2">👨‍💻</div>
                     <p className="text-sm">
-                      Place myphoto.jpg in the /photo directory
+                      Image failed to load
                     </p>
                   </div>
                 </div>
