@@ -10,20 +10,6 @@ A modern, responsive portfolio website built with React, TypeScript, and Vite.
 - Tailwind CSS
 - SWC (for fast refresh)
 
-## 📦 Installation
-
-1. Clone the repository:
-
-```bash
-git clone <your-repository-url>
-cd my_portfolio_website
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
 
 ## 🔧 Development
 
