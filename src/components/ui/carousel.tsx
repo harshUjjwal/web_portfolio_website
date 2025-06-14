@@ -5,19 +5,26 @@ import useEmblaCarousel, {
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { createSafeContext } from "@/lib/createSafeContext";
 import { Button } from "@/components/ui/button";
 
-type CarouselApi = UseEmblaCarouselType[1];
-type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
-type CarouselOptions = UseCarouselParameters[0];
-type CarouselPlugin = UseCarouselParameters[1];
+// TODO: The plugins type needs to be properly typed.
+// Current implementation works functionally but type definition is incomplete.
+// Need to revisit once better type definitions or examples are available from embla-carousel-react.
+// Potential solutions:
+// 1. Use EmblaPluginType[] from embla-carousel-react
+// 2. Infer type from useEmblaCarousel parameters
+// 3. Create a custom type based on actual plugin usage
 
-type CarouselProps = {
-  opts?: CarouselOptions;
-  plugins?: CarouselPlugin;
+type CarouselApi = UseEmblaCarouselType[1];
+type UseCarouselParameters = Parameters<typeof useEmblaCarousel>[0];
+
+interface CarouselProps {
+  opts?: UseCarouselParameters;
+  plugins?: UseEmblaCarouselType[1];
   orientation?: "horizontal" | "vertical";
   setApi?: (api: CarouselApi) => void;
-};
+}
 
 type CarouselContextProps = {
   carouselRef: ReturnType<typeof useEmblaCarousel>[0];
@@ -28,17 +35,7 @@ type CarouselContextProps = {
   canScrollNext: boolean;
 } & CarouselProps;
 
-const CarouselContext = React.createContext<CarouselContextProps | null>(null);
-
-function useCarousel() {
-  const context = React.useContext(CarouselContext);
-
-  if (!context) {
-    throw new Error("useCarousel must be used within a <Carousel />");
-  }
-
-  return context;
-}
+const [CarouselProvider, useCarousel] = createSafeContext<CarouselContextProps>("Carousel");
 
 const Carousel = React.forwardRef<
   HTMLDivElement,
@@ -110,16 +107,17 @@ const Carousel = React.forwardRef<
       }
 
       onSelect(api);
-      api.on("reInit", onSelect);
       api.on("select", onSelect);
+      api.on("reInit", onSelect);
 
       return () => {
-        api?.off("select", onSelect);
+        api.off("select", onSelect);
+        api.off("reInit", onSelect);
       };
     }, [api, onSelect]);
 
     return (
-      <CarouselContext.Provider
+      <CarouselProvider
         value={{
           carouselRef,
           api: api,
@@ -142,7 +140,7 @@ const Carousel = React.forwardRef<
         >
           {children}
         </div>
-      </CarouselContext.Provider>
+      </CarouselProvider>
     );
   },
 );
@@ -204,7 +202,7 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute  h-8 w-8 rounded-full",
+        "absolute h-8 w-8 rounded-full",
         orientation === "horizontal"
           ? "-left-12 top-1/2 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",

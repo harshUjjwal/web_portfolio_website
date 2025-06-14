@@ -1,12 +1,16 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
+import ReactDOM from "react-dom/client";
+import { initSentry } from "@/lib/sentry";
 import App from "./App.tsx";
 import "./index.css";
+
+// Initialize Sentry in production
+initSentry();
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Root element not found");
 
-createRoot(root).render(
+ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

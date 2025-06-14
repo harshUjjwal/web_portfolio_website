@@ -11,6 +11,7 @@ import {
 } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
+import { createSafeContext } from "@/lib/createSafeContext";
 import { Label } from "@/components/ui/label";
 
 const Form = FormProvider;
@@ -22,9 +23,7 @@ type FormFieldContextValue<
   name: TName;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue,
-);
+const [FormFieldProvider, useFormFieldContext] = createSafeContext<FormFieldContextValue>("FormField");
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
@@ -33,22 +32,24 @@ const FormField = <
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
+    <FormFieldProvider value={{ name: props.name }}>
       <Controller {...props} />
-    </FormFieldContext.Provider>
+    </FormFieldProvider>
   );
 };
 
+type FormItemContextValue = {
+  id: string;
+};
+
+const [FormItemProvider, useFormItemContext] = createSafeContext<FormItemContextValue>("FormItem");
+
 const useFormField = () => {
-  const fieldContext = React.useContext(FormFieldContext);
-  const itemContext = React.useContext(FormItemContext);
+  const fieldContext = useFormFieldContext();
+  const itemContext = useFormItemContext();
   const { getFieldState, formState } = useFormContext();
 
   const fieldState = getFieldState(fieldContext.name, formState);
-
-  if (!fieldContext) {
-    throw new Error("useFormField should be used within <FormField>");
-  }
 
   const { id } = itemContext;
 
@@ -62,14 +63,6 @@ const useFormField = () => {
   };
 };
 
-type FormItemContextValue = {
-  id: string;
-};
-
-const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue,
-);
-
 const FormItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -77,9 +70,9 @@ const FormItem = React.forwardRef<
   const id = React.useId();
 
   return (
-    <FormItemContext.Provider value={{ id }}>
+    <FormItemProvider value={{ id }}>
       <div ref={ref} className={cn("space-y-2", className)} {...props} />
-    </FormItemContext.Provider>
+    </FormItemProvider>
   );
 });
 FormItem.displayName = "FormItem";
